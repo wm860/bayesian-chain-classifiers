@@ -22,10 +22,13 @@ Kolejnym etapem projektu będzie przekształcenie danych w taki sposób, aby mia
 
 #### 2.3 Budowa klasyfikatorów jednoetykietowych
 Klasyfikatorami jednoetykietowymi będą naiwne klasyfikatory bayesowskie, które planujemy zaimplementować klasę NaiveBayes, w której pojawią się takie metody jak fit() - uczenie modelu, predict() - predykcja modelu. Naiwny klasyfikator bayesowski bazuje na wyznaczaniu prawdopodobieństwa przynależności do danej klasy na podstawie prawdopodobieństwa przynależności do danej klasy poszczególnych atrybutów. Klasyfikator Bayesa bazuje bezpośrednio na twierdzeniu Bayesa, z którego można wyliczyć prawdopodobieństwo warunkowe zaistnienia pewnego zdarzenia, pod warunkiem zajścia innego zdarzenia:
+
 ![img.png](img.png)
 
 gdzie *a* to zestaw cech, *c* to badana hipoteza, czyli etykieta. *P(c=d)* to prawdopodobieństwo a'priori, *P(c=d|a1=v1,...,an=vn)* to prawdopodobieństwo a'posterioi. Warto zauważyć, że klasyfikator bayesowski zakłada niezależność cech, która to obrazuje się następującym wzorem:
+
 ![img_1.png](img_1.png)
+
 Powyższy zabieg jest oczywiście uproszczeniem, ale w praktyce sprawdza się w wielu przypadkach.
 Przy implementacji klasyfikatora Bayesa zastosujemy również wygładzanie laplace'a z możliwością zmiany parametru alpha.
 
@@ -48,8 +51,9 @@ Z racji na implementacyjny charakter projektu postanowiliśmy zbadać i zweryfik
    
    
    - #### Charakterystyka zbioru danych:
+Zdecydowano się na wybór danych do testowania modeli z portalu UCI Machine Learning Repository. https://archive.ics.uci.edu/dataset/528/amphibians
 
-Zdecydowano się na wybór danych testowych z udostępnionego zbioru: https://mulan.sourceforge.net/datasets-mlc.html. 
+Zbiór danych zawiera 189 przykładów, 22 atrybuty oraz 4 etykiety. Zbiór danych zawiera informacje o płazach i pochodzi z portalu GIS oraz informacji satelitarnych, a także z informacji zebranych z inwentaryzacji przyrodniczych w Polsce. Atrybuty każdego przykładu opisują środowisko przyrodnicze danej okolicy, np. liczba zbiorników wodnych w okolicy, typ zbiorników, obecność podmokłych łąk, stawów, itp. Etykiety opisują z kolei gatunki płazów, które występują w danej okolicy; każda etykieta odpowada osobnemu gatunkowi płaza. Zbiór danych nie zawiera brakujących wartości. Składa się z atrubutów numerycznych, porządkowych, a także kategorycznych.
 
   - #### Procedura ocenu modeli 
 Przede wszystkim planujemy wyznaczyć dokładność predykcji modelu. W tym celu wybrany zbiór danych zostanie podzielony na zbiór treningowy i testowy, nastepnie wytrenowany na zbiorze treningowym, a wyniki klasyfikacji zostaną porównane z etykietami zbioru testowego. Tą samą operację zamierzamy przeprowadzić dla obu zbiorów danych, a dokładność wyników porównać ze sobą i zestawić w tabeli zbiorczej. Wyniki predykcji chcielibyśmy również porównać z wynikami gotowych algorytmów, zaimplementowanych w bibliotece scikit-learn. Dodatkowo do tworzenia klasyfikatora wieloetykietowego przyda się biblioteka scikit-mulilearn. Ponadto w projekcie na potrzeby przetwarzania danych planujemy wykorzystać biblioteki takie jak pandas, numpy.
