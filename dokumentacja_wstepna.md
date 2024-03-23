@@ -52,10 +52,10 @@ Z racji na implementacyjny charakter projektu postanowiliśmy zbadać i zweryfik
    
    - #### Charakterystyka zbioru danych:
 Zdecydowano się na wybór danych do testowania modeli z portalu UCI Machine Learning Repository. https://archive.ics.uci.edu/dataset/528/amphibians
-
 Zbiór danych zawiera 189 przykładów, 22 atrybuty oraz 4 etykiety. Zbiór danych zawiera informacje o płazach i pochodzi z portalu GIS oraz informacji satelitarnych, a także z informacji zebranych z inwentaryzacji przyrodniczych w Polsce. Atrybuty każdego przykładu opisują środowisko przyrodnicze danej okolicy, np. liczba zbiorników wodnych w okolicy, typ zbiorników, obecność podmokłych łąk, stawów, itp. Etykiety opisują z kolei gatunki płazów, które występują w danej okolicy; każda etykieta odpowada osobnemu gatunkowi płaza. Zbiór danych nie zawiera brakujących wartości. Składa się z atrubutów numerycznych, porządkowych, a także kategorycznych.
 
-Jako drugi zestaw danych wybrano również dane o podłożu biologiczno-przyrodniczym: https://archive.ics.uci.edu/dataset/406/anuran+calls+mfccs. Dane umożliwiają rozpoznawanie gatunków anuranów(żab) na podstawie dzięków, które wydają. Ten zestaw danych został utworzony na podstawie segmentacji 60 nagrań audio należących do 4 różnych rodzin, 8 rodzajów i 10 gatunków. Każdy dźwięk odpowiada jednemu okazowi. Dane składają się z ponad 7000 przykładów. Każdy przykład posiada 3 etykiety określające gatunek, rodzaj i rodzinę płazów. Przykłądy skłądają się z 22 atrybutów - współczynników MFCC, które to są wynikami analizy sygnału dźwiękowego. Podane dane mają charakter numeryczny
+Jako drugi zestaw danych wybrano również dane o podłożu biologiczno-przyrodniczym: https://archive.ics.uci.edu/dataset/406/anuran+calls+mfccs. 
+Dane umożliwiają rozpoznawanie gatunków anuranów(żab) na podstawie dzięków, które wydają. Ten zestaw danych został utworzony na podstawie segmentacji 60 nagrań audio należących do 4 różnych rodzin, 8 rodzajów i 10 gatunków. Każdy dźwięk odpowiada jednemu okazowi. Dane składają się z ponad 7000 przykładów. Każdy przykład posiada 3 etykiety określające gatunek, rodzaj i rodzinę płazów. Przykłądy skłądają się z 22 atrybutów - współczynników MFCC, które to są wynikami analizy sygnału dźwiękowego. Podane dane mają charakter numeryczny
 
 
   - #### Procedura ocenu modeli 
