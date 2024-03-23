@@ -8,26 +8,53 @@ Tworzenie modeli klasyfikacji wieloetykietowej przez zastosowanie dekompozycji n
 
 ### 1. Interpretacja tematu projektu
 
-Głównym celem projektu jest implementacja algorytmu służącego do klasysyfikacji przykładów posiadających więcej niż jedną etykietę. Każdy przykład ma przypisany zestaw binarnych znaczników. Jednym ze sposobów stworzenia modelu umożliwiającego predykcje na bazie przykładów wieloetykietowych jest dokonanie tranformacji tej bazy zgodnie z metodą łańcucha klasyfikatorów. Metoda ta polega na sekwencyjnym (czyli w kolejności) tworzeniu modeli klasyfikacji binarnej, w której to dla każdego kolejnego modelu dodaje się do zbioru atrybutów predykcje etykiet poprzednich modeli wykorzystanych przy wcześniej rozważanych etykietach. Innymi słowy dla przykładu składającego się z wektora atrybutów X = (x1, x2, x3) i etykiet Y = (y1, y2), pierwszy model tworzymy dla przykładu składającego się jedynie z wektora atrybutów X = (x1, x2, x3) i etykiety Y = (y1). Model przewiduje nam wartość y1. W kolejnym podejściu tworzymy drugi model, tym razem już dla przykładu składającego się z wektora atrybutów X = (x1, x2, x3, y1) i etykiety Y = (y2). Kolejność predykcji następujących po sobie etykiet jest istotna i ma wpływ na końcowy wynik, zatem w testach modelu postaramy się zbadać wpływ kolejności etykiet na wynik klasyfikacji dla konkretnych przykładów. 
+Głównym celem projektu jest implementacja algorytmu służącego do klasysyfikacji przykładów posiadających więcej niż jedną etykietę. Każdy przykład ma przypisany zestaw binarnych znaczników. Jednym ze sposobów stworzenia modelu umożliwiającego predykcje na bazie przykładów wieloetykietowych jest dokonanie tranformacji tej bazy zgodnie z metodą łańcucha klasyfikatorów. Metoda ta polega na sekwencyjnym (czyli w kolejności) tworzeniu modeli klasyfikacji binarnej, w której to dla każdego kolejnego modelu dodaje się do zbioru atrybutów predykcje etykiet poprzednich modeli wykorzystanych przy wcześniej rozważanych etykietach. Innymi słowy dla przykładu składającego się z wektora atrybutów X = (x1, x2, x3) i etykiet Y = (y1, y2), pierwszy model tworzymy dla przykładu składającego się jedynie z wektora atrybutów X = (x1, x2, x3) i etykiety Y = (y1). Model przewiduje nam wartość y1. W kolejnym podejściu tworzymy drugi model, tym razem już dla przykładu składającego się z wektora atrybutów X = (x1, x2, x3, y1) i etykiety Y = (y2). Kolejność predykcji następujących po sobie etykiet jest istotna i ma wpływ na końcowy wynik, zatem w testach modelu postaramy się zbadać wpływ kolejności etykiet na wynik klasyfikacji dla konkretnych przykładów. Wybranym klasyfikatorem dla każdego z modeli będzie naiwny klasyfikator bayesowski.
 
 ### 2. Opis części implementacyjnej oraz lista algorytmów, bibliotek, klas, funkcji
 
+Projekt będzie realizowany w języku Python. Poniżej przedstawiono poszczególne etapy implementacji:
 
-### 3. Plan badań:
+#### 2.1 Przygotowanie danych 
+W tym etapie wczytane zostaną przykłady z plików o rozszerzeniu .arff. Następnie dane te zostaną przejrzane oraz dokonana zostanie ich wstępna analiza w celu np. znalezienia i wyeliminowania przykładów z brakującymi wartościami. Po wstępnej analizie dane zostaną podzielone na 2 części - zestaw atrybutów oraz zestaw etykiet. Operacja ta będzie możliwa dzięki zaimplementowaniu klasy Data dziedziczącej z klasy NamedTuple. Cała realizacja odbędzie się w ramach metody read_rada().
+
+#### 2.2 Preprocessing danych
+Kolejnym etapem projektu będzie przekształcenie danych w taki sposób, aby miały one odpowiedni format i były gotowe do bezpośredniego przekazania modelu klasyfikacji. Zostanie zaimplementowana funkcja split_data(), która podzieli dane na zbiór treningowy i testowy we wspomnianej proporcji 4:1. Funkcja ta będzie zwracać 2 zestawy danych. Następnie przewiduje się konwersję danych kategorycznych na wersję numeryczną za pomocą enkodera (prawdopodobnie wybranym enkoderem bedzie OneHotEncoder(), którego użyjemy korzystając z sklearn).
+
+#### 2.3 Budowa klasyfikatorów jednoetykietowych
+Klasyfikatorami jednoetykietowymi będą naiwne klasyfikatory bayesowskie, które planujemy zaimplementować klasę NaiveBayes, w której pojawią się takie metody jak fit() - uczenie modelu, predict() - predykcja modelu. Naiwny klasyfikator bayesowski bazuje na wyznaczaniu prawdopodobieństwa przynależności do danej klasy na podstawie prawdopodobieństwa przynależności do danej klasy poszczególnych atrybutów. Klasyfikator Bayesa bazuje bezpośrednio na twierdzeniu Bayesa, z którego można wyliczyć prawdopodobieństwo warunkowe zaistnienia pewnego zdarzenia, pod warunkiem zajścia innego zdarzenia:
+![img.png](img.png)
+
+gdzie *a* to zestaw cech, *c* to badana hipoteza, czyli etykieta. *P(c=d)* to prawdopodobieństwo a'priori, *P(c=d|a1=v1,...,an=vn)* to prawdopodobieństwo a'posterioi. Warto zauważyć, że klasyfikator bayesowski zakłada niezależność cech, która to obrazuje się następującym wzorem:
+![img_1.png](img_1.png)
+Powyższy zabieg jest oczywiście uproszczeniem, ale w praktyce sprawdza się w wielu przypadkach.
+Przy implementacji klasyfikatora Bayesa zastosujemy również wygładzanie laplace'a z możliwością zmiany parametru alpha.
+
+#### 2.4 Implementacja łańcucha klasyfikatorów
+W tym etapie zaimplementujemy łańcuha klasyfikatorów, który będzie składał się z klasy ClassifierChain. W tej klasie zaimplementujemy metody fit(), która to bedzie wywoływać w pętli metody klasy *NaiveBayes* oraz predict(). W metodzie fit() będziemy tworzyć kolejne modele klasyfikacji binarnej, a w metodzie predict() będziemy przewidywać etykiety dla kolejnych modeli. W klasie ClassifierChain zrealizujemy w ten sposób, aby można było przekazać kolejność etykiet, dla których chcemy przewidywać wartości. 
+
+#### 2.6 Testowanie modelu
+#### 2.7 Analiza wyników
+
+
+### 3. Plan badań - testowanie modelu:
    - #### Cel badań,
 
-Z racji na implementacyjny charakter projektu postanowiliśmy zbadać i zweryfikowac jedynie podstawowe czynniki i parametry modelu mogące mieć wpływ na ostateczne wyniki klasyfikacji. Planuje się wyznaczyć: 
+Z racji na implementacyjny charakter projektu postanowiliśmy zbadać i zweryfikowac jedynie podstawowe czynniki i parametry modelu mogące mieć wpływ na ostateczne wyniki klasyfikacji. Planujemy wyznaczyć: 
    - dokładność wyników klasyfikacji dla przynajmniej 2 zestawów danych testowych, 
    - czas uczenia modelu,,
    - wpływ kolejności etykiet na wynik klasyfikacji,
+   - wpływ zmiany stosunku podziału na wynik klasyfikacji,
    - wpływ .... na wynik klasyfikacji,
-   - wpływ .... na wynik klasyfikacji,
-   - dodatkowo, gdy wystarczy czasu to chcielibyśmy wyznaczyć współczynniki takie, jak: precyzja, czułość, F1 score.
+   
    
    - #### Charakterystyka zbioru danych:
 
 Zdecydowano się na wybór danych testowych z udostępnionego zbioru: https://mulan.sourceforge.net/datasets-mlc.html. 
 
   - #### Procedura ocenu modeli 
-Przede wszystkim planujemy wyznaczyć dokładność predykcji modelu. W tym celu wybrany zbiór danych zostanie podzielony na zbiór treningowy i testowy w proporcji 4:1. Następnie model zostanie wytrenowany na zbiorze treningowym, a wyniki klasyfikacji zostaną porównane z etykietami zbioru testowego. Tą samą operację zamierzamy przeprowadzić dla 2 ziorów danych a dokładność wyników porównać ze sobą oraz z metodami dostępnymi z biblioteki scikit-learn. 
+Przede wszystkim planujemy wyznaczyć dokładność predykcji modelu. W tym celu wybrany zbiór danych zostanie podzielony na zbiór treningowy i testowy, nastepnie wytrenowany na zbiorze treningowym, a wyniki klasyfikacji zostaną porównane z etykietami zbioru testowego. Tą samą operację zamierzamy przeprowadzić dla obu zbiorów danych, a dokładność wyników porównać ze sobą i zestawić w tabeli zbiorczej. Wyniki predykcji chcielibyśmy również porównać z wynikami gotowych algorytmów, zaimplementowanych w bibliotece scikit-learn. Dodatkowo do tworzenia klasyfikatora wieloetykietowego przyda się biblioteka scikit-mulilearn. Ponadto w projekcie na potrzeby przetwarzania danych planujemy wykorzystać biblioteki takie jak pandas, numpy.
+
+   - #### Plan eksperymentów
+W ramach eksperymentów planujemy przeprowadzić testy dla różnych zbiorów danych, różnych proporcji podziału na zbiór treningowy i testowy, różnych kolejności etykiet, różnych wartości parametru alpha w wygładzaniu laplace'a klasyfikatora Bayesa.
+
 
