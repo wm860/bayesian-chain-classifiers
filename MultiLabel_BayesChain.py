@@ -7,7 +7,8 @@ from random import shuffle
 
 from sklearn.metrics import accuracy_score
 from sklearn.naive_bayes import GaussianNB
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
 
 
 class Data(NamedTuple):
@@ -37,6 +38,50 @@ def split_amphibians_data(data):
     return train_data, test_data
 def read_anuran_data_():
     pass
+
+class BayesianChainClassifier:
+    def __init__(self, classifiers):
+        self.classifiers = classifiers
+
+    def fit(self, X_train, y_train):
+        for i, clf in enumerate(self.classifiers):
+            if i == 0:
+                clf.fit(X_train, y_train)
+            else:
+                X_train, y_train = self._generate_input_data(X_train, y_train, i-1)
+                clf.fit(X_train, y_train)
+
+    def predict(self, X_test):
+        y_pred = None
+        for i, clf in enumerate(self.classifiers):
+            if i == 0:
+                y_pred = clf.predict(X_test)
+            else:
+                X_test = self._generate_input_data(X_test, y_pred, i-1)
+                y_pred = clf.predict(X_test)
+        return y_pred
+
+    def _generate_input_data(self, X, y_pred, index):
+        # Przygotuj dane wejściowe dla następnego klasyfikatora
+        # Tutaj można dodać logikę modyfikacji danych na podstawie poprzednich predykcji
+        return X
+
+# Przygotuj dane treningowe i testowe
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Definiuj klasyfikatory Bayesa w łańcuchu
+classifiers = [
+    MultinomialNB(),
+    MultinomialNB()
+]
+
+# Inicjalizuj i trenuj łańcuch klasyfikatorów Bayesa
+chain_classifier = BayesianChainClassifier(classifiers)
+chain_classifier.fit(X_train, y_train)
+
+# Dokonaj predykcji
+y_pred = chain_classifier.predict(X_test)
+
 
 class NaiveBayes:
     def __init__(self):
