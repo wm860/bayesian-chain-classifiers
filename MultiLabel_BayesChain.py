@@ -208,7 +208,7 @@ def main():
     chain_classifier.fit(X_train, y_train)
     y_pred = chain_classifier.predict(X_test)
     print(y_pred)
-
+    print(accuracy_score(y_test, y_pred))
 
 if __name__ == "__main__":
     main()
