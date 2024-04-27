@@ -21,13 +21,13 @@ class ClassifierChains(BaseEstimator, ClassifierMixin):
         if self.order is None:
             # default value - natural order for number of labels
             self.order = list(range(y.shape[1]))
-        elif self.order == 'random':
+        elif self.order == "random":
             # random order
             self.order = list(range(y.shape[1]))
             random.shuffle(self.order)
         else:
             # order specified
-            if (len(self.order) == y.shape[1]):
+            if len(self.order) == y.shape[1]:
                 # expect order from 1, hence reduce 1 to consider zero indexing
                 self.order = [o - 1 for o in self.order]
 
@@ -41,27 +41,26 @@ class ClassifierChains(BaseEstimator, ClassifierMixin):
         # create a new dataframe with X and y-in the order specified
         # if order = [2,4,5,6...] -> X_joined= X, y2, y4, y5...
         for val in self.order:
-            X_joined = pd.concat([X_joined, y['Class' + str(val + 1)]], axis=1)
+            X_joined = pd.concat([X_joined, y["Class" + str(val + 1)]], axis=1)
 
         # for each ith model, fit the model on X + y0 to yi-1 (in the order specified)
         # if order = [2,4,6,....] fit 1st model on X for y2, fit second model on X+y2 for y4...
         for chain_index, model in enumerate(self.models):
             # select values of the class in order
-            y_vals = y.loc[:, 'Class' + str(self.order[chain_index] + 1)]
+            y_vals = y.loc[:, "Class" + str(self.order[chain_index] + 1)]
             # pick values for training - X+y upto the current label
-            t_X = X_joined.iloc[:, :(X.shape[1] + chain_index)]
+            t_X = X_joined.iloc[:, : (X.shape[1] + chain_index)]
             check_X_y(t_X, y_vals)
             # fit the model
             model.fit(t_X, y_vals)
 
     # The predict function to make a set of predictions for a set of query instances
     def predict(self, X):
-
         # check if the models list has been set up
-        check_is_fitted(self, ['models'])
+        check_is_fitted(self, ["models"])
 
         # dataframe to maintain previous predictions
-        pred_chain = pd.DataFrame(columns=['Class' + str(o + 1) for o in self.order])
+        pred_chain = pd.DataFrame(columns=["Class" + str(o + 1) for o in self.order])
 
         X_copy = X.copy()
         X_joined = X.copy()
@@ -82,11 +81,11 @@ class ClassifierChains(BaseEstimator, ClassifierMixin):
             # predict on the base model
             pred = model.predict(X_joined)
             # add the new prediction to the pred chain
-            pred_chain['Class' + str(self.order[i] + 1)] = pred
+            pred_chain["Class" + str(self.order[i] + 1)] = pred
             i += 1
 
         # re-arrange the columns in natural order to return the predictions
-        pred_chain = pred_chain.loc[:, ['Class' + str(j + 1) for j in range(0, len(self.order))]]
+        pred_chain = pred_chain.loc[:, ["Class" + str(j + 1) for j in range(0, len(self.order))]]
         # all sklearn implementations return numpy array
         # hence convert the dataframe to numpy array
         return pred_chain.to_numpy()
@@ -94,18 +93,18 @@ class ClassifierChains(BaseEstimator, ClassifierMixin):
     # Function to predict probabilities of 1s
     def predict_proba(self, X):
         # check if the models list has been set up
-        check_is_fitted(self, ['models'])
+        check_is_fitted(self, ["models"])
 
         # dataframe to maintain previous predictions
-        pred_chain = pd.DataFrame(columns=['Class' + str(o + 1) for o in self.order])
+        pred_chain = pd.DataFrame(columns=["Class" + str(o + 1) for o in self.order])
         # dataframe to maintain probabilities of class labels
-        pred_probs = pd.DataFrame(columns=['Class' + str(o + 1) for o in self.order])
+        pred_probs = pd.DataFrame(columns=["Class" + str(o + 1) for o in self.order])
         X_copy = X.copy()
         X_joined = X.copy()
 
-            # use default indexing
-            X_joined.reset_index(drop=True, inplace=True)
-            X_copy.reset_index(drop=True, inplace=True)
+        # use default indexing
+        X_joined.reset_index(drop=True, inplace=True)
+        X_copy.reset_index(drop=True, inplace=True)
 
         i = 0
 
@@ -121,13 +120,13 @@ class ClassifierChains(BaseEstimator, ClassifierMixin):
             # predict probabilities
             pred_proba = model.predict_proba(X_joined)
             # add the new prediction to the pred chain
-            pred_chain['Class' + str(self.order[i] + 1)] = pred
+            pred_chain["Class" + str(self.order[i] + 1)] = pred
             # save the probabilities of 1 according to label order
-            pred_probs['Class' + str(self.order[i] + 1)] = [one_prob[1] for one_prob in pred_proba]
+            pred_probs["Class" + str(self.order[i] + 1)] = [one_prob[1] for one_prob in pred_proba]
             i += 1
 
         # re-arrange the columns in natural order to return the probabilities
-        pred_probs = pred_probs.loc[:, ['Class' + str(j + 1) for j in range(0, len(self.order))]]
+        pred_probs = pred_probs.loc[:, ["Class" + str(j + 1) for j in range(0, len(self.order))]]
         # all sklearn implementations return numpy array
         # hence convert the dataframe to numpy array
         return pred_probs.to_numpy()
