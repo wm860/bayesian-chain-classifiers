@@ -239,6 +239,7 @@ def main():
     # print("F1 score: ", np.mean(f1s))
     X_train.reset_index(drop=True, inplace=True)
     X_test.reset_index(drop=True, inplace=True)
+
     # kodowanie etykiet
     y_train_encoded, y_test_encoded = encode_etiquette(y_train, y_test)
     y_test_encoded.reset_index(drop=True, inplace=True)
