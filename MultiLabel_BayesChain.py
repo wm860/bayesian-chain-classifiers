@@ -14,6 +14,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import train_test_split
 from sklearn.base import clone
 
+from chow_liu_py import chow_liu
 
 class Data(NamedTuple):
     attributes: list
@@ -219,6 +220,8 @@ def main():
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+
+
     gnb = GaussianNB()
     cnb = RandomForestClassifier()  # CategoricalNB()
     mnb = MultinomialNB()
@@ -226,6 +229,7 @@ def main():
     f1s = []
     acs = []
 
+    ''' kod odpowiedzialny za trenowanie, predykcje i ocene pojedynczego klasyfikatora
     class_index = 0
     class_name = "Family"
     for _ in range(1):
@@ -237,12 +241,15 @@ def main():
 
     print("classifier accuracy score: ", np.mean(acs))
     # print("F1 score: ", np.mean(f1s))
+    '''
     X_train.reset_index(drop=True, inplace=True)
     X_test.reset_index(drop=True, inplace=True)
 
     # kodowanie etykiet
     y_train_encoded, y_test_encoded = encode_etiquette(y_train, y_test)
     y_test_encoded.reset_index(drop=True, inplace=True)
+
+    ''' sprawdzenie dizalania łańcucha klasyfikatorów
     for _ in range(1):
         chain_classifier = ClassifiersChain(gnb, order=[2, 1, 0])
         chain_classifier.fit(X_train, y_train_encoded)
@@ -250,6 +257,11 @@ def main():
         print(class_name)
         print("chain score ", accuracy_score(y_test_encoded[class_name], y_pred[class_name]))
         print("F1 chain: ", f1_score(y_test_encoded[class_name], y_pred[class_name], average="macro"))
+    '''
+
+    res = []
+    res = chow_liu(y_train_encoded)
+    print(5)
 
 
 if __name__ == "__main__":
