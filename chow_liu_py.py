@@ -29,16 +29,39 @@ def chow_liu(X, root=None):
     """
 
     # Compute the mutual information between each pair of variables
-    marginals = {v: X[v].value_counts(normalize=True) for v in X.columns}
+    marginals = {v: X[v].value_counts(normalize=True) for v in X.columns} #prawdopodobienstwa brzegowe
     edge = collections.namedtuple("edge", ["u", "v", "mi"])
+    '''
     mis = (
         edge(u, v, mutual_info(puv=X.groupby([u, v]).size() / len(X), pu=marginals[u], pv=marginals[v]))
         for u, v in itertools.combinations(sorted(X.columns), 2)
     )
+    mis_list = list(mis)
+    edges = ((e.u, e.v) for e in sorted(mis_list, key=lambda e: e.mi, reverse=True))
+    '''
+    mutual_info_values = {}
+    for u, v in itertools.combinations(sorted(X.columns), 2):
+        puv = X.groupby([u, v]).size() / len(X) #prawdopodobienstwo wspolne
+        pu = marginals[u]
+        pv = marginals[v]
+        '''
+        a = puv.index.levels
+        b = pu.index
+        c = pv.index
+        '''
+        mutual_info_values[(u, v)] = mutual_info(puv, pu, pv)
+
+    #tworzenie listy krotek (u, v, mi)
+    mis = []
+    for key, value in mutual_info_values.items():
+        u, v = key
+        mis.append(edge(u, v, value))
+
     edges = ((e.u, e.v) for e in sorted(mis, key=lambda e: e.mi, reverse=True))
+    e_see = list(edges)
 
     # Extract the maximum spanning tree
-    neighbors = kruskal(vertices=X.columns, edges=edges)
+    neighbors = kruskal(vertices=X.columns, edges=e_see)
 
     if root is None:
         root = X.columns[0]
@@ -47,6 +70,14 @@ def chow_liu(X, root=None):
 
 
 def mutual_info(puv, pu, pv):
+    mi = 0.0
+    for (u_val,v_val), p_uv in puv.items():
+        p_u = pu[u_val]
+        p_v = pv[v_val]
+        mi += p_uv * np.log(p_uv / (p_u * p_v))
+    return mi
+
+def mutual_info2(puv, pu, pv):
     """Return the mutual information between variables u and v."""
 
     # We first align pu and pv with puv so that we can vectorise the MI computation

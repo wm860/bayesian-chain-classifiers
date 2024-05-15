@@ -260,7 +260,7 @@ def main():
     '''
 
     res = []
-    res = chow_liu(y_train_encoded)
+    res = chow_liu(y_train_encoded, root="Genus")
     print(5)
 
 
