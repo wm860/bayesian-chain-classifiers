@@ -12,6 +12,13 @@ from chain_classifier import ClassifiersChain
 def main():
     # data = read_amphibians_data()
     X, y = read_anuran_data()
+    # print(X.shape[0])
+    # print(X.shape[1])
+    # print(y.shape[0])
+    # print(y.shape[1])
+    # for col in y.columns:
+    #     print(y[col].value_counts())
+    #     print(" ")
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 

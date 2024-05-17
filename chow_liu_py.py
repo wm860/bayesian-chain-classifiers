@@ -8,27 +8,8 @@ __all__ = ["chow_liu"]
 
 
 def chow_liu(X, root=None):
-    """Return a Chow-Liu tree.
 
-    A Chow-Liu tree takes three steps to build:
-
-    1. Compute the mutual information between each pair of variables. The values are organised in
-        a fully connected graph.
-    2. Extract the maximum spanning tree from the graph.
-    3. Orient the edges of the tree by picking a root.
-
-    the current implementation uses Kruskal's algorithm to extract the MST.
-
-    References
-    ----------
-
-    1. Chow, C. and Liu, C., 1968. Approximating discrete probability distributions with
-        dependence trees. IEEE transactions on Information Theory, 14(3), pp.462-467.
-    2. https://www.wikiwand.com/en/Chow-Liu_tree
-
-    """
-
-    # Compute the mutual information between each pair of variables
+     # Compute the mutual information between each pair of variables
     marginals = {v: X[v].value_counts(normalize=True) for v in X.columns} #prawdopodobienstwa brzegowe
     edge = collections.namedtuple("edge", ["u", "v", "mi"])
     '''
@@ -77,27 +58,7 @@ def mutual_info(puv, pu, pv):
         mi += p_uv * np.log(p_uv / (p_u * p_v))
     return mi
 
-def mutual_info2(puv, pu, pv):
-    """Return the mutual information between variables u and v."""
-
-    # We first align pu and pv with puv so that we can vectorise the MI computation
-    pu = pu.reindex(puv.index.get_level_values(pu.name)).values  # marginal distribution
-    pv = pv.reindex(puv.index.get_level_values(pv.name)).values  # marginal distribution
-
-    return (puv * np.log(puv / (pv * pu))).sum()  # mutual information
-
-
 class DisjointSet:
-    """Disjoint-set data structure.
-
-    References
-    ----------
-
-    1. Tarjan, R.E. and Van Leeuwen, J., 1984. Worst-case analysis of set union algorithms.
-        Journal of the ACM (JACM), 31(2), pp.245-281.
-    2. https://www.wikiwand.com/en/Disjoint-set_data_structure
-
-    """
 
     def __init__(self, *values):
         self.parents = {x: x for x in values}
@@ -116,18 +77,6 @@ class DisjointSet:
 
 
 def kruskal(vertices, edges):
-    """Find the Maximum Spanning Tree of a dense graph using Kruskal's algorithm.
-
-    The provided edges are assumed to be sorted in descending order.
-
-    References
-    ----------
-
-    1. Kruskal, J.B., 1956. On the shortest spanning subtree of a graph and the traveling
-        salesman problem. Proceedings of the American Mathematical society, 7(1), pp.48-50.
-
-    """
-
     ds = DisjointSet(*vertices)
     neighbors = collections.defaultdict(set)
 
@@ -144,8 +93,7 @@ def kruskal(vertices, edges):
 
 
 def orient_tree(neighbors, root, visited):
-    """Return tree edges that originate from the given root."""
-
+    #Zwraca pary zależności na podstawie roota oraz sąsiadow z algorytmu Kruskala
     for neighbor in neighbors[root] - visited:
         yield root, neighbor
         yield from orient_tree(neighbors, root=neighbor, visited={root})
