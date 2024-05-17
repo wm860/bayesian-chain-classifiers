@@ -1,6 +1,7 @@
-.idea
+.*
 venv
 prob.py
-*.docx
+dokumentacja_wstępna_ZUM.docx
+~$kumentacja_wstępna_ZUM.docx
 ruff.toml
 .ruff_cache
