@@ -52,7 +52,7 @@ def chow_liu(X, root=None):
 
 def mutual_info(puv, pu, pv):
     mi = 0.0
-    for (u_val,v_val), p_uv in puv.items():
+    for (u_val, v_val), p_uv in puv.items():
         p_u = pu[u_val]
         p_v = pv[v_val]
         mi += p_uv * np.log(p_uv / (p_u * p_v))
