@@ -5,3 +5,8 @@ dokumentacja_wstępna_ZUM.docx
 ruff.toml
 .ruff_cache
 test_files
+chow_liu_py.py
+chain_classifier.py
+dokumentacja_wstępna_ZUM.pdf
+MultiLabel_BayesChain.py
+preprocessing.py
